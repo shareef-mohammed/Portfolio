@@ -2,58 +2,55 @@ import React, { useEffect, useState } from "react";
 import FireFliesBackground from "./FireFliesBackground";
 import Navigation from "./Navigation";
 import { styles } from "../styles";
+import splitStringUsingRegx from "../utils/splitStringUsingRegx";
+import { motion } from "framer-motion";
+
+const intro = "Hi, I'm Shareef";
+const designation = "I'm a skilled Full Stack Developer.";
 
 const LandingPage = ({}) => {
-  const [intro, setIntro] = useState("");
-  const [designation, setDesignation] = useState("");
-  const [firstIndex, setFirstIndex] = useState(0);
-  const [secondIndex, setSecondIndex] = useState(0);
-  let text1 = "Hi, I'm Shareef";
-  let text2 = "I'm a skilled Full Stack Developer.";
-  const infinite = true;
-  useEffect(() => {
-    let timeout;
+  const charVariants = {
+    hidden: { opacity: 0 },
+    reveal: { opacity: 1 },
+  };
 
-    if (firstIndex < text1.length) {
-      timeout = setTimeout(() => {
-        setIntro((prevText) => prevText + text1[firstIndex]);
-        setFirstIndex((prevIndex) => prevIndex + 1);
-      }, 200);
-    } else if (infinite) {
-      // ADD THIS CHECK
-      timeout = setTimeout(() => {
-        setIntro(""); // Clear text
-        setFirstIndex(0); // Restart animation
-        setDesignation("");
-        setSecondIndex(0);
-      }, 20000);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [firstIndex, infinite, text1]);
-
-  useEffect(() => {
-    let timeout;
-    if (firstIndex === text1.length) {
-      if (secondIndex < text2.length) {
-        timeout = setTimeout(() => {
-          setDesignation((prev) => prev + text2[secondIndex]);
-          setSecondIndex((prev) => prev + 1);
-        }, 150);
-      } 
-    }
-    return () => clearTimeout(timeout);
-  }, [secondIndex, firstIndex, text2]);
-
+  const introChars = splitStringUsingRegx(intro);
+  const designationChars = splitStringUsingRegx(designation);
   return (
     <div className="relative">
       <div className="absolute top-20 left-6">
-        <h1 className={`${styles.heroHeadText} text-[#915eff]`}>{intro}</h1>
-        <p
+        <motion.h1
+          initial="hidden"
+          whileInView="reveal"
+          transition={{staggerChildren: .05}}
+          className={`${styles.heroHeadText} `}
+        >
+          {introChars.map((char) => (
+            <motion.span
+              key={char}
+              transition={{ duration: 0.5 }}
+              variants={charVariants}
+            >
+              {char}
+            </motion.span>
+          ))}
+        </motion.h1>
+        <motion.p
+          initial="hidden"
+          whileInView="reveal"
+          transition={{staggerChildren: .05}}
           className={`${styles.heroSubText} mt-2 text-white-100 hidden lg:block`}
         >
-          {designation}
-        </p>
+          {designationChars.map((char) => (
+            <motion.span
+              key={char}
+              transition={{ duration: 0.35 }}
+              variants={charVariants}
+            >
+              {char}
+            </motion.span>
+          ))}
+        </motion.p>
       </div>
       <img
         src="./background/home-background.png"
